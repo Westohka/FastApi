@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pydantic
+sqlalchemy
+databases
+passlib
+bcrypt
+python-jose
+python-multipart
+aiofiles
+asyncpg
+psycopg2
+httpx
+bs4

@@ -1,0 +1,14 @@
+version: '3'
+services:
+  core_api:
+    build: .
+    container_name: "core_api_container"
+    restart: always
+    ports:
+      - "8000:8000"
+  db:
+    build: ./Postgres/
+    container_name: "db_container"
+    restart: always
+    ports:
+      - "5432:5432"
