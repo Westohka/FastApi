@@ -7,7 +7,7 @@ from sqlalchemy.sql.functions import array_agg
 from Utils import Database, DBCheckoutConnection
 from Users import UserOutput
 
-from .models import MessageOutputDB, MessageInput
+from .models import MessageOutput, MessageInput
 from .tables import table, likes
 
 # Create Message Class
@@ -32,31 +32,36 @@ class MessageService:
     # Get info about message
 
     @classmethod
-    async def info( cls, msg_id: int ) -> MessageOutputDB:
+    async def info( cls, msg_id: int ) -> MessageOutput:
         await DBCheckoutConnection()
 
         query = table.select()\
-            .with_only_columns( [table.c.id, table.c.usr_id, table.c.media, table.c.text, table.c.link, array_agg( likes.c.usr_id )] )\
+            .with_only_columns( [table.c.id, table.c.usr_id, table.c.media, table.c.text, table.c.link,
+                                 array_agg( likes.c.usr_id )] )\
             .select_from( table.join( likes, table.c.id == likes.c.msg_id, isouter = True ) )\
             .where( table.c.id == msg_id )\
             .group_by( table.c.id )
 
         data = await Database.fetch_one( query )
+        like_list = data.get( 'array_agg_1' )
+
+        if like_list == [None]:
+            like_list = []
 
         if not data:
             raise RuntimeError( 'Message not find' )
 
-        return MessageOutputDB( text = data.get( 'text' ),
-                                media = data.get( 'media' ),
-                                link = data.get( 'link' ),
-                                usr_id = data.get( 'usr_id' ),
-                                id = data.get( 'id' ),
-                                likes = data.get( 'array_agg_1' ) )
+        return MessageOutput( text = data.get( 'text' ),
+                              media = data.get( 'media' ),
+                              link = data.get( 'link' ),
+                              usr_id = data.get( 'usr_id' ),
+                              id = data.get( 'id' ),
+                              likes = like_list )
 
     # Insert new message into blog
 
     @classmethod
-    async def insert( cls, data: MessageInput, user: UserOutput ) -> MessageOutputDB:
+    async def insert( cls, data: MessageInput, user: UserOutput ) -> MessageOutput:
         await DBCheckoutConnection()
 
         query = table.insert().values( text = data.text,
@@ -66,17 +71,17 @@ class MessageService:
 
         msg_id = await Database.execute( query )
 
-        return MessageOutputDB( text = data.text,
-                                media = data.media,
-                                link = data.link,
-                                usr_id = user.id,
-                                id = msg_id,
-                                likes = [] )
+        return MessageOutput( text = data.text,
+                              media = data.media,
+                              link = data.link,
+                              usr_id = user.id,
+                              id = msg_id,
+                              likes = [] )
 
     # Delete message from blog
 
     @classmethod
-    async def delete( cls, msg_id: int, user: UserOutput ) -> MessageOutputDB:
+    async def delete( cls, msg_id: int, user: UserOutput ) -> MessageOutput:
         await DBCheckoutConnection()
 
         query = table.select().where( table.c.id == msg_id )
@@ -91,12 +96,12 @@ class MessageService:
         query = table.delete().where( table.c.id == msg_id )
         await Database.execute( query )
 
-        return MessageOutputDB( text = msg.get('text'),
-                                media = msg.get( 'media' ),
-                                link = msg.get( 'link' ),
-                                usr_id = msg.get( 'usr_id' ),
-                                id = msg.get( 'id' ),
-                                likes = msg.get( 'likes' ) )
+        return MessageOutput( text = msg.get('text'),
+                              media = msg.get( 'media' ),
+                              link = msg.get( 'link' ),
+                              usr_id = msg.get( 'usr_id' ),
+                              id = msg.get( 'id' ),
+                              likes = msg.get( 'likes' ) )
 
     # Like/unlike message. Return like status
 

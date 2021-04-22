@@ -16,13 +16,12 @@ class LinkPreview( object ):
 
     async def requestPreview( self ):
         del self._data
-        del self._imageCashed
 
         self._data = None
 
         async with httpx.AsyncClient() as client:
             data = await client.get( self.url, timeout = self.timeout )
-            self._data = BeautifulSoup( data, "lxml" )
+            self._data = BeautifulSoup( data )
 
     # Title url
 
