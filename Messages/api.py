@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from typing import List
 
 from .service import MessageService
-from .models import Link, MessageInfo, MessageIdsList, MessageInput
+from .models import Link, MessageInfo, MessageInput
 
 from Utils import LinkPreview, FileManager
 from Users import TokenController, UserOutput
@@ -45,8 +45,8 @@ async def message( msg_id: int ) -> MessageInfo:
                         link = await getLinkInfo( result.link ),
                         likes = result.likes )
 
-@router.get( '/msg', response_model = List[MessageIdsList], tags = ["Messages"] )
-async def messages( page: int = 0, page_limit: int = 2 ) -> List[MessageIdsList]:
+@router.get( '/msg', response_model = List[int], tags = ["Messages"] )
+async def messages( page: int = 0, page_limit: int = 2 ) -> List[int]:
     msgs = await MessageService.list( page, page_limit )
     return msgs
 

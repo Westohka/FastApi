@@ -7,7 +7,7 @@ from sqlalchemy.sql.functions import array_agg
 from Utils import Database, DBCheckoutConnection
 from Users import UserOutput
 
-from .models import MessageIdsList, MessageOutputDB, MessageInput
+from .models import MessageOutputDB, MessageInput
 from .tables import table, likes
 
 # Create Message Class
@@ -16,11 +16,18 @@ class MessageService:
     # Get a list of message id`s on a page
 
     @classmethod
-    async def list( cls, page: int, page_limit: int ) -> List[MessageIdsList]:
+    async def list( cls, page: int, page_limit: int ) -> List[int]:
         await DBCheckoutConnection()
 
         query = table.select().with_only_columns( [table.c.id] ).offset( page_limit * page ).limit( page_limit )
-        return await Database.fetch_all( query )
+        data = await Database.fetch_all( query )
+
+        msg_list = []
+
+        for msg in data:
+            msg_list.append( msg.get( 'id' ) )
+
+        return msg_list
 
     # Get info about message
 

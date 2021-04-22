@@ -25,11 +25,6 @@ class MessageUpdate( BaseModel ):
     media: Optional[List[str]]
     link: Optional[str]
 
-# Message only id model
-
-class MessageIdsList( BaseModel ):
-    id: int
-
 # Link output model
 
 class Link(BaseModel):
