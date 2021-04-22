@@ -7,7 +7,7 @@ import databases
 
 USER = 'postgres'
 PASSWORD = 'password'
-HOST = 'localhost'# if os.environ.get( 'TEST_FLAG' ) else 'db'
+HOST = 'localhost' if os.environ.get( 'TEST_FLAG' ) else 'db'
 PORT = '5432'
 DB_NAME = 'database'
 
