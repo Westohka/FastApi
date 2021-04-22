@@ -8,19 +8,30 @@ metadata = MetaData()
 
 # Create Messages Table
 
-table = Table( 'messages',
-                metadata,
-                Column( 'id', Integer, primary_key = True, index = True ),
-                Column( 'usr_id', Integer, ForeignKey( UserTable.c.id, onupdate = "CASCADE", ondelete = "CASCADE" ) ),
-                Column( 'text', String ),
-                Column( 'media', ARRAY( String ) ),
-                Column( 'link', String ) )
+table = Table('messages',
+              metadata,
+              Column('id', Integer, primary_key=True, index=True),
+              Column('usr_id', Integer,
+                     ForeignKey(UserTable.c.id,
+                                onupdate="CASCADE",
+                                ondelete="CASCADE")),
+              Column('text', String),
+              Column('media', ARRAY(String)),
+              Column('link', String))
 
 # Relationship table with users likes
 
-likes = Table( 'messages_likes_users',
-               metadata,
-               Column( 'msg_id', Integer, ForeignKey( table.c.id, onupdate = "CASCADE", ondelete = "CASCADE" ), primary_key = True ),
-               Column( 'usr_id', Integer , ForeignKey( UserTable.c.id, onupdate = "CASCADE", ondelete = "CASCADE" ), primary_key = True ) )
+likes = Table('messages_likes_users',
+              metadata,
+              Column('msg_id', Integer,
+                     ForeignKey(table.c.id,
+                                onupdate="CASCADE",
+                                ondelete="CASCADE"),
+                     primary_key=True),
+              Column('usr_id', Integer,
+                     ForeignKey(UserTable.c.id,
+                                onupdate="CASCADE",
+                                ondelete="CASCADE"),
+                     primary_key=True))
 
-metadata.create_all( DatabaseEngine )
+metadata.create_all(DatabaseEngine)

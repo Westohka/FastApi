@@ -3,10 +3,11 @@
 import httpx
 from bs4 import BeautifulSoup
 
-class LinkPreview( object ):
-    def __init__( self,
-                  url: str,
-                  timeout: int = 20 ):
+
+class LinkPreview(object):
+    def __init__(self,
+                 url: str,
+                 timeout: int = 20):
         self.url = url
         self.timeout = timeout
 
@@ -14,26 +15,25 @@ class LinkPreview( object ):
 
     # Get content and parse data from url
 
-    async def requestPreview( self ):
+    async def requestPreview(self):
         del self._data
-        del self._imageCashed
 
         self._data = None
 
         async with httpx.AsyncClient() as client:
-            data = await client.get( self.url, timeout = self.timeout )
-            self._data = BeautifulSoup( data, "lxml" )
+            data = await client.get(self.url, timeout=self.timeout)
+            self._data = BeautifulSoup(data)
 
     # Title url
 
     @property
-    def title( self ) -> str:
-        meta = self._data.find( "meta", property = "og:title" )
+    def title(self) -> str:
+        meta = self._data.find("meta", property="og:title")
 
         if meta and meta["content"]:
             return meta["content"]
 
-        meta = self._data.find( "meta", property = "twitter:title" )
+        meta = self._data.find("meta", property="twitter:title")
 
         if meta and meta["content"]:
             return meta["content"]
@@ -46,20 +46,20 @@ class LinkPreview( object ):
     # Description url
 
     @property
-    def description( self ) -> str:
-        meta = self._data.find( "meta", property = "og:description" )
+    def description(self) -> str:
+        meta = self._data.find("meta", property="og:description")
 
         if meta and meta["content"]:
             return meta["content"]
 
-        meta = self._data.find( "meta", property = "twitter:description" )
+        meta = self._data.find("meta", property="twitter:description")
 
         if meta and meta["content"]:
             return meta["content"]
 
-        meta = self._data.find( "meta", property = "description" )
+        meta = self._data.find("meta", property="description")
 
-        if meta and meta.has_attr( 'content' ):
+        if meta and meta.has_attr('content'):
             return meta["content"]
 
         return ""
@@ -67,13 +67,13 @@ class LinkPreview( object ):
     # Image url
 
     @property
-    def image( self ) -> str:
-        meta = self._data.find( "meta", property = "og:image" )
+    def image(self) -> str:
+        meta = self._data.find("meta", property="og:image")
 
         if meta and meta["content"]:
             return meta["content"]
 
-        meta = self._data.find( "meta", property = "twitter:image" )
+        meta = self._data.find("meta", property="twitter:image")
 
         if meta and meta["content"]:
             return meta["content"]

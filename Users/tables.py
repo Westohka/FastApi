@@ -7,10 +7,10 @@ metadata = MetaData()
 
 # Create Messages Table
 
-table = Table( 'users',
-               metadata,
-               Column( 'id', Integer, primary_key = True, index = True ),
-               Column( 'login', String ),
-               Column( 'password', String ) )
+table = Table('users',
+              metadata,
+              Column('id', Integer, primary_key=True, index=True),
+              Column('login', String),
+              Column('password', String))
 
-metadata.create_all( engine )
+metadata.create_all(engine)

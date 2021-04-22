@@ -2,13 +2,15 @@ from pydantic import BaseModel
 
 # Create User Model
 
-class UserInput( BaseModel ):
+
+class UserInput(BaseModel):
     login: str
     password: str
 
 # Output User Model
 
-class UserOutput( BaseModel ):
+
+class UserOutput(BaseModel):
     id: int
     login: str
     password: str
